@@ -14,14 +14,14 @@ const HeroSection = () => {
           className="text-[clamp(38px,4.5vw,58px)] font-light leading-[1.08] tracking-tight text-foreground mb-6 animate-fade-up"
           style={{ animationDelay: "0.12s" }}
         >
-          Protect what<br />
-          <strong className="font-semibold">you've built.</strong>
+          Innovative Cybersecurity:{" "}<br />
+          <strong className="font-semibold">Empowering Philippine Businesses</strong>
         </h1>
         <p
           className="text-[17px] leading-[1.75] text-muted-foreground max-w-[420px] mb-14 animate-fade-up"
           style={{ animationDelay: "0.2s" }}
         >
-          YAHSHUA-ABBA has partnered with CyTech International to bring U.S.-backed cybersecurity into your payroll, HR, and accounting platform — with no disruption to your team.
+          YAHSHUA-ABBA has partnered with CyTech International to bring enterprise-grade, AI-powered security into the platform you already rely on. Working together so you'll have peace of mind.
         </p>
         <div
           className="flex gap-10 pt-10 border-t border-border animate-fade-up"
