@@ -1,7 +1,13 @@
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 
 const FormCard = () => {
   const [activeTab, setActiveTab] = useState<"webinar" | "assessment">("webinar");
+
+  useEffect(() => {
+    const handler = () => setActiveTab("assessment");
+    window.addEventListener("switch-to-assessment", handler);
+    return () => window.removeEventListener("switch-to-assessment", handler);
+  }, []);
   const [webinarSubmitted, setWebinarSubmitted] = useState(false);
   const [assessmentSubmitted, setAssessmentSubmitted] = useState(false);
 
