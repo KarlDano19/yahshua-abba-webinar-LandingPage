@@ -196,6 +196,7 @@ const FormCard = () => {
             )}
             <p className="mt-3.5 text-[11px] text-muted-foreground/50 text-center leading-relaxed">
               Complimentary · No obligation · CyTech specialists
+              <br />Includes the NPC Administrative Fines Guidelines — sent on confirmation.
             </p>
           </div>
         )}
