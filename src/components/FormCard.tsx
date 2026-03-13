@@ -1,7 +1,13 @@
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 
 const FormCard = () => {
   const [activeTab, setActiveTab] = useState<"webinar" | "assessment">("webinar");
+
+  useEffect(() => {
+    const handler = () => setActiveTab("assessment");
+    window.addEventListener("switch-to-assessment", handler);
+    return () => window.removeEventListener("switch-to-assessment", handler);
+  }, []);
   const [webinarSubmitted, setWebinarSubmitted] = useState(false);
   const [assessmentSubmitted, setAssessmentSubmitted] = useState(false);
 
@@ -184,11 +190,13 @@ const FormCard = () => {
                 <p className="text-base font-semibold text-foreground mb-2">Request received.</p>
                 <p className="text-[13px] text-muted-foreground leading-relaxed">
                   We'll be in touch within 2 business days to schedule your complimentary assessment.
+                  <br />The NPC Administrative Fines Guidelines is on its way to your inbox now.
                 </p>
               </div>
             )}
             <p className="mt-3.5 text-[11px] text-muted-foreground/50 text-center leading-relaxed">
               Complimentary · No obligation · CyTech specialists
+              <br />Includes the NPC Administrative Fines Guidelines — sent on confirmation.
             </p>
           </div>
         )}

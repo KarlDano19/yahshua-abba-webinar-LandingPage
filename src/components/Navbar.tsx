@@ -27,6 +27,7 @@ const Navbar = () => {
 
         <ul className="hidden md:flex items-center gap-8 list-none">
           <li><a href="#why" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors no-underline">Why</a></li>
+          <li><a href="#reports" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors no-underline">Reports</a></li>
           <li><a href="#speakers" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors no-underline">Speakers</a></li>
           <li><a href="#webinar" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors no-underline">Webinar</a></li>
           <li>

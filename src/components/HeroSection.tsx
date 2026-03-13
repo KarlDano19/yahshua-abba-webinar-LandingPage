@@ -39,6 +39,10 @@ const HeroSection = () => {
             <div className="text-[26px] font-semibold tracking-tight text-foreground leading-none mb-1">17+</div>
             <div className="text-[12px] text-muted-foreground tracking-[0.02em]">Years in PH Market</div>
           </div>
+          <div>
+            <div className="text-[26px] font-semibold tracking-tight text-foreground leading-none mb-1">₱5M</div>
+            <div className="text-[12px] text-muted-foreground tracking-[0.02em]">Max NPC Fine</div>
+          </div>
         </div>
       </div>
       <FormCard />
