@@ -190,6 +190,7 @@ const FormCard = () => {
                 <p className="text-base font-semibold text-foreground mb-2">Request received.</p>
                 <p className="text-[13px] text-muted-foreground leading-relaxed">
                   We'll be in touch within 2 business days to schedule your complimentary assessment.
+                  <br />The NPC Administrative Fines Guidelines is on its way to your inbox now.
                 </p>
               </div>
             )}
