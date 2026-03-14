@@ -1,73 +1,134 @@
-# Welcome to your Lovable project
+Webinar Landing Page
 
-## Project info
+YAHSHUA-ABBA × CyTech International campaign landing page for the April 7, 2026 live webinar and free security assessment.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Live URL:** https://webinar-registration-yahshua.vercel.app/
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## What This Page Does
 
-**Use Lovable**
+- Webinar registration form — captures leads and sends a confirmation email via Loops
+- Assessment request form — captures leads, delivers the NPC Administrative Fines Guidelines via email, and redirects to CyTech's assessment form
+- Proof block — links to WEF, IBM, and Palo Alto Networks research reports
+- NPC teaser — highlights the Philippine government's data privacy fine structure to drive assessment requests
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+| Layer | Tool |
+|---|---|
+| Frontend | React + Vite + Tailwind CSS |
+| Hosting | Vercel |
+| Form backend | Vercel Serverless Function (`api/register.js`) |
+| Lead storage | Google Sheets (via Google Sheets API) |
+| Email sending | Loops (transactional emails) |
+| Auth for Sheets | Google Cloud Service Account |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Project Structure
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+/
+├── api/
+│   └── register.js         # Serverless function — handles form submissions
+├── src/
+│   ├── components/
+│   │   ├── FormCard.tsx     # Webinar + Assessment form tabs
+│   │   └── ...
+│   ├── pages/
+│   │   └── Index.tsx        # Main landing page
+│   └── main.tsx
+├── public/
+├── package.json
+├── vercel.json              # Vercel config — routes api/ as serverless functions
+└── vite.config.ts
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Form Submission Flow
 
-**Use GitHub Codespaces**
+```
+Client submits form
+        ↓
+api/register.js (Vercel serverless function)
+        ↓              ↓
+Google Sheets      Loops API
+(new row added)    (confirmation email sent)
+                       ↓
+              Webinar → confirmation + Zoom link (sent April 6)
+              Assessment → confirmation + NPC circular PDF link
+                       ↓
+              Assessment only → redirect to CyTech's assessment form
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
+## Environment Variables
 
-This project is built with:
+All set in Vercel → Settings → Environment Variables.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+| Variable | What it is |
+|---|---|
+| `VITE_GOOGLE_SERVICE_ACCOUNT_EMAIL` | Service account email from Google Cloud |
+| `VITE_GOOGLE_PRIVATE_KEY_B64` | Private key from JSON file — Base64 encoded |
+| `VITE_GOOGLE_SHEET_ID` | ID from the Google Sheet URL |
+| `VITE_LOOPS_API_KEY` | API key from Loops → Settings → API |
+| `VITE_LOOPS_WEBINAR_ID` | Transactional ID of the Webinar Confirmation email in Loops |
+| `VITE_LOOPS_ASSESSMENT_ID` | Transactional ID of the Assessment Confirmation email in Loops |
 
-## How can I deploy this project?
+> ⚠️ Never commit these values to GitHub. Always set them in Vercel's dashboard only.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## Google Sheets Setup
 
-Yes, you can!
+- Sheet name: `Secure Business Philippines — Leads`
+- Tab: `Sheet1`
+- Columns: Timestamp · Type · First Name · Last Name · Email · Company · Role · Team Size · Challenge · Source
+- Access: Sheet is shared with the Google Cloud Service Account as Editor
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Loops Setup
+
+Two transactional emails published in Loops:
+
+**Webinar Confirmation**
+- Triggered when `type = "webinar"`
+- Sends: date, time, what to expect, Zoom link placeholder
+
+**Assessment Confirmation**
+- Triggered when `type = "assessment"`
+- Sends: next steps, NPC circular PDF link
+- Data variable: `firstName`
+
+---
+
+## Deploying Changes
+
+**Code changes** — commit to GitHub → Vercel redeploys automatically.
+
+**Environment variable changes** — update in Vercel dashboard → go to Deployments → manually redeploy the latest deployment.
+
+---
+
+## Pending Items
+
+- [ ] Replace CyTech assessment form URL in `FormCard.tsx` redirect once received
+- [ ] Update Loops assessment confirmation email with CyTech form URL
+- [ ] Update landing page domain once custom domain is configured
+- [ ] Remove debug `console.log` lines from `api/register.js` before go-live
+
+---
+
+## Contacts
+
+| Role | Name |
+|---|---|
+| Campaign lead | Karl |
+| CEO / Presenter | Pastor Ron Bayron, YAHSHUA-ABBA |
+| Partner CEO | Chen Heffer, CyTech International |
