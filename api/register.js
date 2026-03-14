@@ -26,9 +26,9 @@ export default async function handler(req, res) {
 
   // ── 1. GET GOOGLE ACCESS TOKEN ──────────────────────────────
   async function getGoogleToken() {
-    const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const serviceEmail = process.env.VITE_GOOGLE_SERVICE_ACCOUNT_EMAIL;
     console.log("Service email:", serviceEmail);
-    const rawB64 = process.env.GOOGLE_PRIVATE_KEY_B64 || "";
+    const rawB64 = process.env.VITE_GOOGLE_PRIVATE_KEY_B64 || "";
     const privateKey = Buffer.from(rawB64, "base64").toString("utf8").replace(/\\n/g, "\n").trim();
     console.log("Key starts with:", privateKey.substring(0, 40));
     console.log("Key ends with:", privateKey.substring(privateKey.length - 40));
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
   // ── 2. WRITE TO GOOGLE SHEETS ───────────────────────────────
   try {
     const token = await getGoogleToken();
-    const sheetId = process.env.GOOGLE_SHEET_ID;
+    const sheetId = process.env.VITE_GOOGLE_SHEET_ID;
 
     const sheetsRes = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A:J:append?valueInputOption=USER_ENTERED`,
@@ -105,8 +105,8 @@ export default async function handler(req, res) {
   // ── 3. SEND LOOPS EMAIL ─────────────────────────────────────
   try {
     const transactionalId = isWebinar
-      ? process.env.LOOPS_WEBINAR_ID
-      : process.env.LOOPS_ASSESSMENT_ID;
+      ? process.env.VITE_LOOPS_WEBINAR_ID
+      : process.env.VITE_LOOPS_ASSESSMENT_ID;
 
     console.log("Loops transactionalId:", transactionalId);
     console.log("Sending to email:", email);
@@ -115,7 +115,7 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
+        Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
       },
       body: JSON.stringify({
         transactionalId,
