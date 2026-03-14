@@ -29,10 +29,8 @@ export default async function handler(req, res) {
     const rawKey = process.env.GOOGLE_PRIVATE_KEY || "";
 
     // Handle both \\n (escaped) and \n (real) in the key
-    const privateKey = rawKey
-      .replace(/\\n/g, "\n")
-      .replace(/"/g, "")
-      .trim();
+    const privateKey = rawKey.split("\\n").join("\n");
+
 
     const now = Math.floor(Date.now() / 1000);
 
@@ -50,7 +48,7 @@ export default async function handler(req, res) {
     const { createSign } = await import("crypto");
     const sign = createSign("RSA-SHA256");
     sign.update(`${header}.${payload}`);
-    const signature = sign.sign(privateKey, "base64url");
+    const signature = sign.sign(, "base64url");
 
     const jwt = `${header}.${payload}.${signature}`;
 
