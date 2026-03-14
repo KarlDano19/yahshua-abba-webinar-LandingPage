@@ -29,7 +29,10 @@ export default async function handler(req, res) {
     const rawKey = process.env.GOOGLE_PRIVATE_KEY || "";
 
     // Handle both \\n (escaped) and \n (real) in the key
-    const privateKey = rawKey.split("\\n").join("\n");
+    const privateKey = rawKey
+      .replace(/\\n/g, "\n")
+      .replace(/"/g, "")
+      .trim();
 
     const now = Math.floor(Date.now() / 1000);
 
@@ -98,6 +101,8 @@ export default async function handler(req, res) {
     const transactionalId = type === "w"
       ? process.env.LOOPS_WEBINAR_ID
       : process.env.LOOPS_ASSESSMENT_ID;
+    console.log("Loops ID being used:", transactionalId);
+    console.log("Type received:", type);
 
     const loopsRes = await fetch("https://app.loops.so/api/v1/transactional", {
       method: "POST",
