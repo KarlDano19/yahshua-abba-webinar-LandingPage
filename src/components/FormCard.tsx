@@ -46,6 +46,9 @@ const FormCard = () => {
     }
 
     setAssessmentSubmitted(true);
+    setTimeout(() => {
+      window.location.href = "CYTECH_FORM_URL_HERE";
+    }, 2500);
   };
 
   const inputClass =
@@ -260,7 +263,8 @@ const FormCard = () => {
                 </div>
                 <p className="text-base font-semibold text-foreground mb-2">Request received.</p>
                 <p className="text-[13px] text-muted-foreground leading-relaxed">
-                  We'll be in touch within <strong>2 business days</strong> to schedule your complimentary assessment.
+                 The NPC Guidelines are on their way to your inbox.<br />
+                  Redirecting you to the assessment form now...
                   <br /><br />
                   The <strong>NPC Administrative Fines Guidelines</strong> is on its way to your inbox now.
                 </p>
