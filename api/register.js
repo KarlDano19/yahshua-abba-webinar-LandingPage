@@ -1,5 +1,5 @@
-import { google } from "@googleapis/sheets";
-
+import pkg from "@googleapis/sheets";
+const { google } = pkg;
 export default async function handler(req, res) {
   // Only accept POST requests
   if (req.method !== "POST") return res.status(405).end();
