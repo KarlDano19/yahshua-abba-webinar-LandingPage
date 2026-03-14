@@ -27,6 +27,7 @@ export default async function handler(req, res) {
   // ── 1. GET GOOGLE ACCESS TOKEN ──────────────────────────────
   async function getGoogleToken() {
     const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    console.log("Service email:", serviceEmail);
     const rawB64 = process.env.GOOGLE_PRIVATE_KEY_B64 || "";
     const privateKey = Buffer.from(rawB64, "base64").toString("utf8").replace(/\\n/g, "\n").trim();
     console.log("Key starts with:", privateKey.substring(0, 40));
