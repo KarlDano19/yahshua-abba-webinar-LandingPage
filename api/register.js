@@ -120,6 +120,13 @@ export default async function handler(req, res) {
         email,
         addToAudience: true,
         dataVariables: { firstName: firstName || "there" },
+        contactProperties: {
+          source: isWebinar ? "webinar registrant" : "assessment request",
+          firstName: firstName || "",
+          lastName: lastName || "",
+          company: company || companyRole || "",
+          teamSize: teamSize || "",
+        },
       }),
     });
 
