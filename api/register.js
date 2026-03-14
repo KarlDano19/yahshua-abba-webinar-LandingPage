@@ -29,6 +29,8 @@ export default async function handler(req, res) {
     const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const rawB64 = process.env.GOOGLE_PRIVATE_KEY_B64 || "";
     const privateKey = Buffer.from(rawB64, "base64").toString("utf8").trim();
+    console.log("Key starts with:", privateKey.substring(0, 40));
+    console.log("Key ends with:", privateKey.substring(privateKey.length - 40));
     
     const now = Math.floor(Date.now() / 1000);
 
