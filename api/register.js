@@ -27,10 +27,12 @@ export default async function handler(req, res) {
   // ── 1. GET GOOGLE ACCESS TOKEN ──────────────────────────────
   async function getGoogleToken() {
     const serviceEmail = process.env.VITE_GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    console.log("Service email:", serviceEmail);
     const rawB64 = process.env.VITE_GOOGLE_PRIVATE_KEY_B64 || "";
-    const privateKey = Buffer.from(rawB64, "base64").toString("utf8").replace(/\\n/g, "\n").trim();
-    
+    const privateKey = Buffer.from(rawB64, "base64")
+      .toString("utf8")
+      .replace(/\\n/g, "\n")
+      .trim();
+
     const now = Math.floor(Date.now() / 1000);
 
     const header = Buffer.from(
@@ -64,11 +66,6 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenRes.json();
-
-    if (!tokenData.access_token) {
-      console.error("Token error:", JSON.stringify(tokenData));
-    }
-
     return tokenData.access_token;
   }
 
@@ -100,40 +97,62 @@ export default async function handler(req, res) {
     console.error("Google Sheets error:", err.message);
   }
 
-  // ── 3. SEND LOOPS EMAIL ─────────────────────────────────────
+  // ── 3. SEND LOOPS EMAIL + UPDATE CONTACT ───────────────────
   try {
     const transactionalId = isWebinar
       ? process.env.VITE_LOOPS_WEBINAR_ID
       : process.env.VITE_LOOPS_ASSESSMENT_ID;
 
-    console.log("Loops transactionalId:", transactionalId);
-    
-
-    const loopsRes = await fetch("https://app.loops.so/api/v1/contacts/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
-        },
-        body: JSON.stringify({
-          email,
-          source: isWebinar ? "webinar registrant" : "assessment request",
-          firstName: firstName || "",
-          lastName: lastName || "",
-        }),
-      });
+    // Send confirmation email
+    const loopsRes = await fetch("https://app.loops.so/api/v1/transactional", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
+      },
+      body: JSON.stringify({
+        transactionalId,
+        email,
+        addToAudience: true,
+        dataVariables: { firstName: firstName || "there" },
+      }),
     });
 
     const loopsData = await loopsRes.json();
 
     if (!loopsRes.ok) {
-      console.error("Loops error:", JSON.stringify(loopsData));
+      console.error("Loops email error:", JSON.stringify(loopsData));
     } else {
       console.log("Loops: email sent successfully");
     }
+
+    // Update contact source and properties
+    const updateRes = await fetch("https://app.loops.so/api/v1/contacts/update", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
+      },
+      body: JSON.stringify({
+        email,
+        source: isWebinar ? "webinar registrant" : "assessment request",
+        firstName: firstName || "",
+        lastName: lastName || "",
+      }),
+    });
+
+    const updateData = await updateRes.json();
+
+    if (!updateRes.ok) {
+      console.error("Loops update error:", JSON.stringify(updateData));
+    } else {
+      console.log("Loops: contact updated successfully");
+    }
+
   } catch (err) {
     console.error("Loops error:", err.message);
   }
 
+  // ── 4. RESPOND ──────────────────────────────────────────────
   res.status(200).json({ ok: true });
 }
