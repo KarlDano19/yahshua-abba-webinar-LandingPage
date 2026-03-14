@@ -1,6 +1,4 @@
 export default async function handler(req, res) {
-  console.log("TEST VAR:", process.env.VITE_TEST);
-  console.log("ALL ENV KEYS:", Object.keys(process.env).join(", "));
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -32,8 +30,6 @@ export default async function handler(req, res) {
     console.log("Service email:", serviceEmail);
     const rawB64 = process.env.VITE_GOOGLE_PRIVATE_KEY_B64 || "";
     const privateKey = Buffer.from(rawB64, "base64").toString("utf8").replace(/\\n/g, "\n").trim();
-    console.log("Key starts with:", privateKey.substring(0, 40));
-    console.log("Key ends with:", privateKey.substring(privateKey.length - 40));
     
     const now = Math.floor(Date.now() / 1000);
 
@@ -111,7 +107,7 @@ export default async function handler(req, res) {
       : process.env.VITE_LOOPS_ASSESSMENT_ID;
 
     console.log("Loops transactionalId:", transactionalId);
-    console.log("Sending to email:", email);
+    
 
     const loopsRes = await fetch("https://app.loops.so/api/v1/transactional", {
       method: "POST",
