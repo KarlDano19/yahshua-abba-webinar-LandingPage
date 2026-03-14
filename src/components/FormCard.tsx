@@ -8,16 +8,43 @@ const FormCard = () => {
     window.addEventListener("switch-to-assessment", handler);
     return () => window.removeEventListener("switch-to-assessment", handler);
   }, []);
+
   const [webinarSubmitted, setWebinarSubmitted] = useState(false);
   const [assessmentSubmitted, setAssessmentSubmitted] = useState(false);
 
-  const handleWebinar = (e: FormEvent) => {
+  const handleWebinar = async (e: FormEvent) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "webinar", ...data }),
+      });
+    } catch (err) {
+      console.error("Webinar submission error:", err);
+    }
+
     setWebinarSubmitted(true);
   };
 
-  const handleAssessment = (e: FormEvent) => {
+  const handleAssessment = async (e: FormEvent) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "assessment", ...data }),
+      });
+    } catch (err) {
+      console.error("Assessment submission error:", err);
+    }
+
     setAssessmentSubmitted(true);
   };
 
@@ -62,7 +89,8 @@ const FormCard = () => {
       </div>
 
       <div className="px-7 pt-5 pb-7 max-[480px]:px-5">
-        {/* Webinar Panel */}
+
+        {/* ── WEBINAR PANEL ── */}
         {activeTab === "webinar" && (
           <div>
             {!webinarSubmitted ? (
@@ -70,25 +98,46 @@ const FormCard = () => {
                 <div className="grid grid-cols-2 gap-3 max-[480px]:grid-cols-1 mb-3">
                   <div>
                     <label className={labelClass}>First Name *</label>
-                    <input className={inputClass} placeholder="Jane" required />
+                    <input
+                      name="firstName"
+                      className={inputClass}
+                      placeholder="Jane"
+                      required
+                    />
                   </div>
                   <div>
                     <label className={labelClass}>Last Name *</label>
-                    <input className={inputClass} placeholder="Reyes" required />
+                    <input
+                      name="lastName"
+                      className={inputClass}
+                      placeholder="Reyes"
+                      required
+                    />
                   </div>
                 </div>
                 <div className="mb-3">
                   <label className={labelClass}>Work Email *</label>
-                  <input type="email" className={inputClass} placeholder="jane@company.com.ph" required />
+                  <input
+                    name="email"
+                    type="email"
+                    className={inputClass}
+                    placeholder="jane@company.com.ph"
+                    required
+                  />
                 </div>
                 <div className="mb-3">
                   <label className={labelClass}>Company *</label>
-                  <input className={inputClass} placeholder="Company name" required />
+                  <input
+                    name="company"
+                    className={inputClass}
+                    placeholder="Company name"
+                    required
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-3 max-[480px]:grid-cols-1 mb-3">
                   <div>
                     <label className={labelClass}>Role *</label>
-                    <select className={selectClass} required>
+                    <select name="role" className={selectClass} required>
                       <option value="">Select</option>
                       <option>CEO / Owner</option>
                       <option>HR Manager</option>
@@ -100,7 +149,7 @@ const FormCard = () => {
                   </div>
                   <div>
                     <label className={labelClass}>Team Size *</label>
-                    <select className={selectClass} required>
+                    <select name="teamSize" className={selectClass} required>
                       <option value="">Employees</option>
                       <option>1 – 50</option>
                       <option>51 – 200</option>
@@ -124,7 +173,7 @@ const FormCard = () => {
                 </div>
                 <p className="text-base font-semibold text-foreground mb-2">You're confirmed.</p>
                 <p className="text-[13px] text-muted-foreground leading-relaxed">
-                  Your Zoom link is on its way.<br />See you on April 7 · 1:00 PM PHT.
+                  Your Zoom link is on its way.<br />See you on <strong>April 7 · 1:00 PM PHT.</strong>
                 </p>
               </div>
             )}
@@ -134,7 +183,7 @@ const FormCard = () => {
           </div>
         )}
 
-        {/* Assessment Panel */}
+        {/* ── ASSESSMENT PANEL ── */}
         {activeTab === "assessment" && (
           <div>
             {!assessmentSubmitted ? (
@@ -142,24 +191,45 @@ const FormCard = () => {
                 <div className="grid grid-cols-2 gap-3 max-[480px]:grid-cols-1 mb-3">
                   <div>
                     <label className={labelClass}>First Name *</label>
-                    <input className={inputClass} placeholder="Jane" required />
+                    <input
+                      name="firstName"
+                      className={inputClass}
+                      placeholder="Jane"
+                      required
+                    />
                   </div>
                   <div>
                     <label className={labelClass}>Last Name *</label>
-                    <input className={inputClass} placeholder="Reyes" required />
+                    <input
+                      name="lastName"
+                      className={inputClass}
+                      placeholder="Reyes"
+                      required
+                    />
                   </div>
                 </div>
                 <div className="mb-3">
                   <label className={labelClass}>Work Email *</label>
-                  <input type="email" className={inputClass} placeholder="jane@company.com.ph" required />
+                  <input
+                    name="email"
+                    type="email"
+                    className={inputClass}
+                    placeholder="jane@company.com.ph"
+                    required
+                  />
                 </div>
                 <div className="mb-3">
                   <label className={labelClass}>Company & Role *</label>
-                  <input className={inputClass} placeholder="Company — Your Title" required />
+                  <input
+                    name="companyRole"
+                    className={inputClass}
+                    placeholder="Company — Your Title"
+                    required
+                  />
                 </div>
                 <div className="mb-3">
                   <label className={labelClass}>Team Size *</label>
-                  <select className={selectClass} required>
+                  <select name="teamSize" className={selectClass} required>
                     <option value="">No. of employees</option>
                     <option>1 – 50</option>
                     <option>51 – 200</option>
@@ -171,6 +241,7 @@ const FormCard = () => {
                 <div className="mb-3">
                   <label className={labelClass}>Current challenge (optional)</label>
                   <textarea
+                    name="challenge"
                     className={`${inputClass} resize-y min-h-[76px] leading-relaxed`}
                     placeholder="Brief description…"
                   />
@@ -189,17 +260,19 @@ const FormCard = () => {
                 </div>
                 <p className="text-base font-semibold text-foreground mb-2">Request received.</p>
                 <p className="text-[13px] text-muted-foreground leading-relaxed">
-                  We'll be in touch within 2 business days to schedule your complimentary assessment.
-                  <br />The NPC Administrative Fines Guidelines is on its way to your inbox now.
+                  We'll be in touch within <strong>2 business days</strong> to schedule your complimentary assessment.
+                  <br /><br />
+                  The <strong>NPC Administrative Fines Guidelines</strong> is on its way to your inbox now.
                 </p>
               </div>
             )}
             <p className="mt-3.5 text-[11px] text-muted-foreground/50 text-center leading-relaxed">
-              Complimentary · No obligation · CyTech specialists
-              <br />Includes the NPC Administrative Fines Guidelines — sent on confirmation.
+              Complimentary · No obligation · CyTech specialists<br />
+              Includes the NPC Administrative Fines Guidelines — sent on confirmation.
             </p>
           </div>
         )}
+
       </div>
     </div>
   );
