@@ -1,3 +1,5 @@
+console.log("TEST VAR:", process.env.VITE_TEST);
+console.log("ALL ENV KEYS:", Object.keys(process.env).join(", "));
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
