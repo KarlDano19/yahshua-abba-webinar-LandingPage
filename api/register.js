@@ -109,25 +109,19 @@ export default async function handler(req, res) {
     console.log("Loops transactionalId:", transactionalId);
     
 
-    const loopsRes = await fetch("https://app.loops.so/api/v1/transactional", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
-      },
-      body: JSON.stringify({
-        transactionalId,
-        email,
-        addToAudience: true,
-        dataVariables: { firstName: firstName || "there" },
-        contactProperties: {
+    const loopsRes = await fetch("https://app.loops.so/api/v1/contacts/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
+        },
+        body: JSON.stringify({
+          email,
           source: isWebinar ? "webinar registrant" : "assessment request",
           firstName: firstName || "",
           lastName: lastName || "",
-          company: company || companyRole || "",
-          teamSize: teamSize || "",
-        },
-      }),
+        }),
+      });
     });
 
     const loopsData = await loopsRes.json();
