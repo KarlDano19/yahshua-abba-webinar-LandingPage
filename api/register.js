@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   const timestamp = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
   const rowData = [
     timestamp,
-    type === "w" ? "webinar" : "assessment",
+    (type === "w" || type === "webinar") ? "webinar" : "assessment",
     firstName || "",
     lastName || "",
     email || "",
@@ -98,7 +98,7 @@ export default async function handler(req, res) {
 
   // ── 3. SEND LOOPS EMAIL ─────────────────────────────────────
   try {
-    const transactionalId = type === "w"
+    const transactionalId = (type === "w" || type === "webinar")
       ? process.env.LOOPS_WEBINAR_ID
       : process.env.LOOPS_ASSESSMENT_ID;
     console.log("Loops ID being used:", transactionalId);
