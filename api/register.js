@@ -27,9 +27,9 @@ export default async function handler(req, res) {
   // ── 1. GET GOOGLE ACCESS TOKEN ──────────────────────────────
   async function getGoogleToken() {
     const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const rawKey = process.env.GOOGLE_PRIVATE_KEY || "";
-    const privateKey = rawKey.split("\\n").join("\n").replace(/"/g, "").trim();
-
+    const rawB64 = process.env.GOOGLE_PRIVATE_KEY_B64 || "";
+    const privateKey = Buffer.from(rawB64, "base64").toString("utf8").trim();
+    
     const now = Math.floor(Date.now() / 1000);
 
     const header = Buffer.from(
