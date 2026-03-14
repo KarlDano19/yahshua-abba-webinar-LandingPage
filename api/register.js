@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Only accept POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -9,10 +8,12 @@ export default async function handler(req, res) {
     company, companyRole, role, teamSize, challenge
   } = req.body;
 
+  const isWebinar = type === "w" || type === "webinar";
+
   const timestamp = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
   const rowData = [
     timestamp,
-    (type === "w" || type === "webinar") ? "webinar" : "assessment",
+    isWebinar ? "webinar" : "assessment",
     firstName || "",
     lastName || "",
     email || "",
@@ -27,32 +28,31 @@ export default async function handler(req, res) {
   async function getGoogleToken() {
     const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const rawKey = process.env.GOOGLE_PRIVATE_KEY || "";
-
-    // Handle both \\n (escaped) and \n (real) in the key
-    const privateKey = rawKey.split("\\n").join("\n");
-
+    const privateKey = rawKey.split("\\n").join("\n").replace(/"/g, "").trim();
 
     const now = Math.floor(Date.now() / 1000);
 
-    // Build JWT header + payload
-    const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
-    const payload = Buffer.from(JSON.stringify({
-      iss: serviceEmail,
-      scope: "https://www.googleapis.com/auth/spreadsheets",
-      aud: "https://oauth2.googleapis.com/token",
-      exp: now + 3600,
-      iat: now,
-    })).toString("base64url");
+    const header = Buffer.from(
+      JSON.stringify({ alg: "RS256", typ: "JWT" })
+    ).toString("base64url");
 
-    // Sign with private key using Node's built-in crypto
+    const payload = Buffer.from(
+      JSON.stringify({
+        iss: serviceEmail,
+        scope: "https://www.googleapis.com/auth/spreadsheets",
+        aud: "https://oauth2.googleapis.com/token",
+        exp: now + 3600,
+        iat: now,
+      })
+    ).toString("base64url");
+
     const { createSign } = await import("crypto");
     const sign = createSign("RSA-SHA256");
     sign.update(`${header}.${payload}`);
-    const signature = sign.sign(, "base64url");
+    const signature = sign.sign(privateKey, "base64url");
 
     const jwt = `${header}.${payload}.${signature}`;
 
-    // Exchange JWT for access token
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -63,6 +63,11 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenRes.json();
+
+    if (!tokenData.access_token) {
+      console.error("Token error:", JSON.stringify(tokenData));
+    }
+
     return tokenData.access_token;
   }
 
@@ -96,11 +101,12 @@ export default async function handler(req, res) {
 
   // ── 3. SEND LOOPS EMAIL ─────────────────────────────────────
   try {
-    const transactionalId = (type === "w" || type === "webinar")
+    const transactionalId = isWebinar
       ? process.env.LOOPS_WEBINAR_ID
       : process.env.LOOPS_ASSESSMENT_ID;
-    console.log("Loops ID being used:", transactionalId);
-    console.log("Type received:", type);
+
+    console.log("Loops transactionalId:", transactionalId);
+    console.log("Sending to email:", email);
 
     const loopsRes = await fetch("https://app.loops.so/api/v1/transactional", {
       method: "POST",
@@ -127,6 +133,5 @@ export default async function handler(req, res) {
     console.error("Loops error:", err.message);
   }
 
-  // ── 4. RESPOND ──────────────────────────────────────────────
   res.status(200).json({ ok: true });
 }
