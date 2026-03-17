@@ -35,16 +35,18 @@ const SpeakersSection = () => (
         {speakers.map((s) => (
           <div
             key={s.name}
-            className="bg-card border border-border rounded-lg p-9 transition-all hover:border-border-mid hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
+            className="bg-card border border-border rounded-lg overflow-hidden flex flex-row transition-all hover:border-border-mid hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
           >
             <img
               src={s.image}
               alt={s.name}
-              className="w-16 h-16 rounded-md object-cover mb-5"
+              className="w-40 h-auto object-cover shrink-0"
             />
-            <div className="text-[17px] font-semibold tracking-tight text-foreground mb-0.5">{s.name}</div>
-            <div className="text-[12px] text-muted-foreground mb-4">{s.role}</div>
-            <p className="text-sm text-muted-foreground leading-[1.75]">{s.bio}</p>
+            <div className="p-7">
+              <div className="text-[17px] font-semibold tracking-tight text-foreground mb-0.5">{s.name}</div>
+              <div className="text-[12px] text-muted-foreground mb-4">{s.role}</div>
+              <p className="text-sm text-muted-foreground leading-[1.75]">{s.bio}</p>
+            </div>
           </div>
         ))}
       </div>
