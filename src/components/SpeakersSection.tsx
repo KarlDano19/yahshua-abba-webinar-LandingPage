@@ -6,7 +6,7 @@ const speakers = [
     image: ptrRon,
     name: "Pastor Ron Bayron",
     role: "CEO, YAHSHUA-ABBA",
-    bio: "17+ years building the Philippines' most trusted integrated payroll, HR, and accounting platform — serving 500+ companies and 100,000+ users nationwide.",
+    bio: "17+ years building the Philippines' most trusted integrated Payroll, HR, and Accounting platform — serving 500+ companies and 100,000+ users nationwide.",
   },
   {
     image: chenHeffer,
