@@ -12,7 +12,7 @@ const speakers = [
     image: chenHeffer,
     name: "Chen Heffer",
     role: "CEO, CyTech International",
-    bio: "Leading a U.S.-backed cybersecurity firm specialising in AI-driven protection, enterprise data continuity, and seamless security integration.",
+    bio: "Leading a U.S.-backed cybersecurity firm specializing in global standard protection, enterprise data continuity, and seamless security integration.",
   },
 ];
 
