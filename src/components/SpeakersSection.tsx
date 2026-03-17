@@ -1,12 +1,15 @@
+import ptrRon from "@/assets/ptr-ron.jpg";
+import chenHeffer from "@/assets/chen-heffer.jpg";
+
 const speakers = [
   {
-    initials: "RB",
+    image: ptrRon,
     name: "Pastor Ron Bayron",
     role: "CEO, YAHSHUA-ABBA",
     bio: "17+ years building the Philippines' most trusted integrated payroll, HR, and accounting platform — serving 500+ companies and 100,000+ employees nationwide.",
   },
   {
-    initials: "CH",
+    image: chenHeffer,
     name: "Chen Heffer",
     role: "CEO, CyTech International",
     bio: "Leading a U.S.-backed cybersecurity firm specialising in AI-driven protection, enterprise data continuity, and seamless security integration.",
@@ -31,12 +34,14 @@ const SpeakersSection = () => (
       <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-4">
         {speakers.map((s) => (
           <div
-            key={s.initials}
+            key={s.name}
             className="bg-card border border-border rounded-lg p-9 transition-all hover:border-border-mid hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
           >
-            <div className="w-12 h-12 bg-accent rounded-md flex items-center justify-center text-sm font-semibold text-accent-foreground tracking-[0.04em] mb-5">
-              {s.initials}
-            </div>
+            <img
+              src={s.image}
+              alt={s.name}
+              className="w-16 h-16 rounded-md object-cover mb-5"
+            />
             <div className="text-[17px] font-semibold tracking-tight text-foreground mb-0.5">{s.name}</div>
             <div className="text-[12px] text-muted-foreground mb-4">{s.role}</div>
             <p className="text-sm text-muted-foreground leading-[1.75]">{s.bio}</p>
