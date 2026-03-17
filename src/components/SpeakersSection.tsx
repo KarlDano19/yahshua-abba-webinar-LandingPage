@@ -6,13 +6,13 @@ const speakers = [
     image: ptrRon,
     name: "Pastor Ron Bayron",
     role: "CEO, YAHSHUA-ABBA",
-    bio: "17+ years building the Philippines' most trusted integrated payroll, HR, and accounting platform — serving 500+ companies and 100,000+ employees nationwide.",
+    bio: "17+ years building the Philippines' most trusted integrated payroll, HR, and accounting platform — serving 500+ companies and 100,000+ users nationwide.",
   },
   {
     image: chenHeffer,
     name: "Chen Heffer",
     role: "CEO, CyTech International",
-    bio: "Leading a U.S.-backed cybersecurity firm specialising in AI-driven protection, enterprise data continuity, and seamless security integration.",
+    bio: "Leading a U.S.-backed cybersecurity firm specializing in global standard protection, enterprise data continuity, and seamless security integration.",
   },
 ];
 
