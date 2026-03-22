@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 
 const QUESTIONS = [
   {
@@ -131,7 +131,11 @@ const Assessment = () => {
 
   const totalChecked = Object.values(checked).filter(Boolean).length;
   const toggleCheck = (id) => setChecked((prev) => ({ ...prev, [id]: !prev[id] }));
-  const handleContact = (e) => setContact((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleContact = useCallback((e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    setContact((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
   const handleSubmit = async () => {
     if (!contact.firstName || !contact.email || !contact.company) {
@@ -161,14 +165,15 @@ const Assessment = () => {
     setSubmitting(false);
   };
 
-  // Shared card wrapper — matches FormCard width and style
-  const Card = ({ children }) => (
-    <div className="min-h-screen bg-background flex items-start justify-center py-12 px-4">
+  // Stable scroll container — prevents scroll-to-top on state updates
+  const scrollRef = useRef(null);
+  const Card = useCallback(({ children }) => (
+    <div ref={scrollRef} className="min-h-screen bg-background flex items-start justify-center py-12 px-4">
       <div className="w-full max-w-[480px]">
         {children}
       </div>
     </div>
-  );
+  ), []);
 
   // ── INTRO ────────────────────────────────────────────────────
   if (step === "intro") {
@@ -321,35 +326,35 @@ const Assessment = () => {
             <div className="grid grid-cols-2 gap-3 max-[480px]:grid-cols-1 mb-3">
               <div>
                 <label className={labelClass}>First Name *</label>
-                <input name="firstName" value={contact.firstName} onChange={handleContact}
+                <input name="firstName" onChange={handleContact}
                   className={inputClass} placeholder="Juan" />
               </div>
               <div>
                 <label className={labelClass}>Last Name</label>
-                <input name="lastName" value={contact.lastName} onChange={handleContact}
+                <input name="lastName" onChange={handleContact}
                   className={inputClass} placeholder="dela Cruz" />
               </div>
             </div>
             <div className="mb-3">
               <label className={labelClass}>Work Email *</label>
-              <input name="email" type="email" value={contact.email} onChange={handleContact}
+              <input name="email" type="email" onChange={handleContact}
                 className={inputClass} placeholder="juan@company.com.ph" />
             </div>
             <div className="grid grid-cols-2 gap-3 max-[480px]:grid-cols-1 mb-3">
               <div>
                 <label className={labelClass}>Company *</label>
-                <input name="company" value={contact.company} onChange={handleContact}
+                <input name="company" onChange={handleContact}
                   className={inputClass} placeholder="Company name" />
               </div>
               <div>
                 <label className={labelClass}>Industry</label>
-                <input name="industry" value={contact.industry} onChange={handleContact}
+                <input name="industry" onChange={handleContact}
                   className={inputClass} placeholder="e.g. Manufacturing" />
               </div>
             </div>
             <div className="mb-5">
               <label className={labelClass}>Your Role</label>
-              <select name="role" value={contact.role} onChange={handleContact} className={selectClass}>
+              <select name="role" onChange={handleContact} className={selectClass}>
                 <option value="">Select role</option>
                 <option>CEO / Owner</option>
                 <option>HR Manager</option>
