@@ -8,112 +8,8 @@ export default async function handler(req, res) {
     company, companyRole, role, teamSize, challenge
   } = req.body;
 
-  // ── ASSESSMENT SCORED HANDLER ───────────────────────────────
-  if (type === "assessment_scored") {
-    const { tier, checkedCount, checks } = req.body;
-
-    const tierEmailMap = {
-      resilient:  process.env.VITE_LOOPS_ASSESSMENT_RESILIENT_ID,
-      moderate:   process.env.VITE_LOOPS_ASSESSMENT_MODERATE_ID,
-      elevated:   process.env.VITE_LOOPS_ASSESSMENT_ELEVATED_ID,
-      critical:   process.env.VITE_LOOPS_ASSESSMENT_CRITICAL_ID,
-    };
-    const transactionalId = tierEmailMap[tier] || process.env.VITE_LOOPS_ASSESSMENT_CRITICAL_ID;
-    const gaps = 6 - (checkedCount || 0);
-    const timestamp = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
-
-    // Write to Google Sheets
-    try {
-      const token = await getGoogleToken();
-      const sheetId = process.env.VITE_GOOGLE_SHEET_ID;
-      const rowData = [
-        timestamp,
-        "assessment_scored",
-        firstName || "",
-        lastName || "",
-        email || "",
-        company || "",
-        role || "",
-        teamSize || "",
-        tier || "",
-        `${checkedCount}/6 confirmed — ${gaps} gap(s)`,
-      ];
-      await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A:J:append?valueInputOption=USER_ENTERED`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ values: [rowData] }),
-        }
-      );
-    } catch (err) {
-      console.error("Sheets error (assessment_scored):", err.message);
-    }
-
-    // Send tier-specific Loops email
-    try {
-      await fetch("https://app.loops.so/api/v1/transactional", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
-        },
-        body: JSON.stringify({
-          transactionalId,
-          email,
-          addToAudience: true,
-          dataVariables: {
-            firstName: firstName || "there",
-            company: company || "",
-            tier: tier || "",
-            checkedCount: String(checkedCount || 0),
-            gaps: String(gaps),
-          },
-        }),
-      });
-
-      // Update Loops contact
-      await fetch("https://app.loops.so/api/v1/contacts/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
-        },
-        body: JSON.stringify({
-          email,
-          source: "assessment_scored",
-          firstName: firstName || "",
-          lastName: lastName || "",
-        }),
-      });
-    } catch (err) {
-      console.error("Loops error (assessment_scored):", err.message);
-    }
-
-    return res.status(200).json({ ok: true });
-  }
-  // ── END ASSESSMENT SCORED HANDLER ───────────────────────────
-
-  const isWebinar = type === "w" || type === "webinar";
-
-  const timestamp = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
-  const rowData = [
-    timestamp,
-    isWebinar ? "webinar" : "assessment",
-    firstName || "",
-    lastName || "",
-    email || "",
-    company || companyRole || "",
-    role || "",
-    teamSize || "",
-    challenge || "",
-    "landing page",
-  ];
-
-  // ── 1. GET GOOGLE ACCESS TOKEN ──────────────────────────────
+  // ── GET GOOGLE ACCESS TOKEN ─────────────────────────────────
+  // Moved to top so it's available to all handlers below
   async function getGoogleToken() {
     const serviceEmail = process.env.VITE_GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const rawB64 = process.env.VITE_GOOGLE_PRIVATE_KEY_B64 || "";
@@ -158,7 +54,131 @@ export default async function handler(req, res) {
     return tokenData.access_token;
   }
 
-  // ── 2. WRITE TO GOOGLE SHEETS ───────────────────────────────
+  // ── ASSESSMENT SCORED HANDLER ───────────────────────────────
+  if (type === "assessment_scored") {
+    const { tier, checkedCount, checks } = req.body;
+
+    const tierEmailMap = {
+      resilient: process.env.VITE_LOOPS_ASSESSMENT_RESILIENT_ID,
+      moderate:  process.env.VITE_LOOPS_ASSESSMENT_MODERATE_ID,
+      elevated:  process.env.VITE_LOOPS_ASSESSMENT_ELEVATED_ID,
+      critical:  process.env.VITE_LOOPS_ASSESSMENT_CRITICAL_ID,
+    };
+    const transactionalId = tierEmailMap[tier] || process.env.VITE_LOOPS_ASSESSMENT_CRITICAL_ID;
+    const gaps = 6 - (checkedCount || 0);
+    const timestamp = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
+
+    // 1. Write to Google Sheets
+    try {
+      const token = await getGoogleToken();
+      const sheetId = process.env.VITE_GOOGLE_SHEET_ID;
+      const rowData = [
+        timestamp,
+        "assessment_scored",
+        firstName || "",
+        lastName || "",
+        email || "",
+        company || "",
+        role || "",
+        teamSize || "",
+        tier || "",
+        `${checkedCount}/6 confirmed — ${gaps} gap(s)`,
+      ];
+      await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A:J:append?valueInputOption=USER_ENTERED`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ values: [rowData] }),
+        }
+      );
+    } catch (err) {
+      console.error("Sheets error (assessment_scored):", err.message);
+    }
+
+    // 2. Send tier-specific result email + NPC guidelines email
+    try {
+      // Email 1 — Tier result (Resilient / Moderate / Elevated / Critical)
+      await fetch("https://app.loops.so/api/v1/transactional", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
+        },
+        body: JSON.stringify({
+          transactionalId,
+          email,
+          addToAudience: true,
+          dataVariables: {
+            firstName: firstName || "there",
+            company: company || "",
+            tier: tier || "",
+            checkedCount: String(checkedCount || 0),
+            gaps: String(gaps),
+          },
+        }),
+      });
+
+      // Email 2 — NPC Guidelines (same as assessment confirmation)
+      await fetch("https://app.loops.so/api/v1/transactional", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
+        },
+        body: JSON.stringify({
+          transactionalId: process.env.VITE_LOOPS_ASSESSMENT_ID,
+          email,
+          dataVariables: {
+            firstName: firstName || "there",
+          },
+        }),
+      });
+
+      // Update Loops contact
+      await fetch("https://app.loops.so/api/v1/contacts/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.VITE_LOOPS_API_KEY}`,
+        },
+        body: JSON.stringify({
+          email,
+          source: "assessment_scored",
+          firstName: firstName || "",
+          lastName: lastName || "",
+        }),
+      });
+
+    } catch (err) {
+      console.error("Loops error (assessment_scored):", err.message);
+    }
+
+    return res.status(200).json({ ok: true });
+  }
+  // ── END ASSESSMENT SCORED HANDLER ───────────────────────────
+
+  // ── WEBINAR + ORIGINAL ASSESSMENT HANDLER ──────────────────
+  const isWebinar = type === "w" || type === "webinar";
+
+  const timestamp = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
+  const rowData = [
+    timestamp,
+    isWebinar ? "webinar" : "assessment",
+    firstName || "",
+    lastName || "",
+    email || "",
+    company || companyRole || "",
+    role || "",
+    teamSize || "",
+    challenge || "",
+    "landing page",
+  ];
+
+  // 1. Write to Google Sheets
   try {
     const token = await getGoogleToken();
     const sheetId = process.env.VITE_GOOGLE_SHEET_ID;
@@ -186,13 +206,12 @@ export default async function handler(req, res) {
     console.error("Google Sheets error:", err.message);
   }
 
-  // ── 3. SEND LOOPS EMAIL + UPDATE CONTACT ───────────────────
+  // 2. Send Loops email + update contact
   try {
     const transactionalId = isWebinar
       ? process.env.VITE_LOOPS_WEBINAR_ID
       : process.env.VITE_LOOPS_ASSESSMENT_ID;
 
-    // Send confirmation email
     const loopsRes = await fetch("https://app.loops.so/api/v1/transactional", {
       method: "POST",
       headers: {
@@ -215,7 +234,6 @@ export default async function handler(req, res) {
       console.log("Loops: email sent successfully");
     }
 
-    // Update contact source and properties
     const updateRes = await fetch("https://app.loops.so/api/v1/contacts/update", {
       method: "PUT",
       headers: {
@@ -242,6 +260,6 @@ export default async function handler(req, res) {
     console.error("Loops error:", err.message);
   }
 
-  // ── 4. RESPOND ──────────────────────────────────────────────
+  // 3. Respond
   res.status(200).json({ ok: true });
 }
