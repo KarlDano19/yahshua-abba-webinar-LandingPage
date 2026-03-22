@@ -10,7 +10,6 @@ const FormCard = () => {
   }, []);
 
   const [webinarSubmitted, setWebinarSubmitted] = useState(false);
-  const [assessmentSubmitted, setAssessmentSubmitted] = useState(false);
 
   const handleWebinar = async (e: FormEvent) => {
     e.preventDefault();
@@ -28,27 +27,6 @@ const FormCard = () => {
     }
 
     setWebinarSubmitted(true);
-  };
-
-  const handleAssessment = async (e: FormEvent) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const data = Object.fromEntries(new FormData(form));
-
-    try {
-      await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "assessment", ...data }),
-      });
-    } catch (err) {
-      console.error("Assessment submission error:", err);
-    }
-
-    setAssessmentSubmitted(true);
-    setTimeout(() => {
-      window.location.href = "CYTECH_FORM_URL_HERE";
-    }, 2500);
   };
 
   const inputClass =
@@ -189,90 +167,24 @@ const FormCard = () => {
         {/* ── ASSESSMENT PANEL ── */}
         {activeTab === "assessment" && (
           <div>
-            {!assessmentSubmitted ? (
-              <form onSubmit={handleAssessment}>
-                <div className="grid grid-cols-2 gap-3 max-[480px]:grid-cols-1 mb-3">
-                  <div>
-                    <label className={labelClass}>First Name *</label>
-                    <input
-                      name="firstName"
-                      className={inputClass}
-                      placeholder="Jane"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Last Name *</label>
-                    <input
-                      name="lastName"
-                      className={inputClass}
-                      placeholder="Reyes"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <label className={labelClass}>Work Email *</label>
-                  <input
-                    name="email"
-                    type="email"
-                    className={inputClass}
-                    placeholder="jane@company.com.ph"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className={labelClass}>Company & Role *</label>
-                  <input
-                    name="companyRole"
-                    className={inputClass}
-                    placeholder="Company — Your Title"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className={labelClass}>Team Size *</label>
-                  <select name="teamSize" className={selectClass} required>
-                    <option value="">No. of employees</option>
-                    <option>1 – 50</option>
-                    <option>51 – 200</option>
-                    <option>201 – 500</option>
-                    <option>501 – 2,000</option>
-                    <option>2,000+</option>
-                  </select>
-                </div>
-                <div className="mb-3">
-                  <label className={labelClass}>Current challenge (optional)</label>
-                  <textarea
-                    name="challenge"
-                    className={`${inputClass} resize-y min-h-[76px] leading-relaxed`}
-                    placeholder="Brief description…"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full mt-1 py-[13px] bg-foreground border-none rounded-md text-[13px] font-medium tracking-[0.04em] text-primary-foreground cursor-pointer hover:opacity-80 active:scale-[0.99] transition-all"
-                >
-                  Request assessment
-                </button>
-              </form>
-            ) : (
-              <div className="text-center py-11 px-5">
-                <div className="w-11 h-11 rounded-full border border-border-mid bg-secondary flex items-center justify-center mx-auto mb-4 text-lg animate-pop-in">
-                  ✓
-                </div>
-                <p className="text-base font-semibold text-foreground mb-2">Request received.</p>
-                <p className="text-[13px] text-muted-foreground leading-relaxed">
-                 The NPC Guidelines are on their way to your inbox.<br />
-                  Redirecting you to the assessment form now...
-                  <br /><br />
-                  The <strong>NPC Administrative Fines Guidelines</strong> is on its way to your inbox now.
-                </p>
-              </div>
-            )}
-            <p className="mt-3.5 text-[11px] text-muted-foreground/50 text-center leading-relaxed">
-              Complimentary · No obligation · CyTech specialists<br />
-              Includes the NPC Administrative Fines Guidelines — sent on confirmation.
+            <div className="text-center py-6 px-2">
+              <div className="text-3xl mb-3">🛡️</div>
+              <p className="text-[14px] font-semibold text-foreground mb-2">
+                2026 Philippine Business<br />Cyber Resilience Assessment
+              </p>
+              <p className="text-[12px] text-muted-foreground leading-relaxed mb-6">
+                3 categories. 6 statements. Under 5 minutes.<br />
+                Get your personalized risk report — free, instantly delivered to your inbox.
+              </p>
+              <button
+                onClick={() => window.location.href = "/assessment"}
+                className="w-full py-[13px] bg-foreground border-none rounded-md text-[13px] font-medium tracking-[0.04em] text-primary-foreground cursor-pointer hover:opacity-80 active:scale-[0.99] transition-all"
+              >
+                Start the Assessment →
+              </button>
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground/50 text-center leading-relaxed">
+              Complimentary · No obligation · Results sent instantly · CyTech specialists
             </p>
           </div>
         )}
