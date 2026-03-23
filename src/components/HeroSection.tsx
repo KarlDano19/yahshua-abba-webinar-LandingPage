@@ -33,7 +33,7 @@ const HeroSection = () => {
           </div>
           <div>
             <div className="text-[26px] font-semibold tracking-tight text-foreground leading-none mb-1">100K+</div>
-            <div className="text-[12px] text-muted-foreground tracking-[0.02em]">Employees</div>
+            <div className="text-[12px] text-muted-foreground tracking-[0.02em]">Users</div>
           </div>
           <div>
             <div className="text-[26px] font-semibold tracking-tight text-foreground leading-none mb-1">17+</div>
