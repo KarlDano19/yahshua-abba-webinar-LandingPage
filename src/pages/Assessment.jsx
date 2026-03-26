@@ -57,6 +57,33 @@ const QUESTIONS = [
   },
 ];
 
+const BENCHMARKS = [
+  {
+    stat: "₱250K–₱1.5M",
+    label: "/ day — Interruption",
+    source: "WEF 2026",
+    description: "What Philippine businesses lose in revenue and productivity for every day systems are offline.",
+  },
+  {
+    stat: "₱500,000+",
+    label: "/ incident — Recovery",
+    source: "Unit 42",
+    description: "Baseline cost to hire forensic experts, clean compromised systems, and restore business files.",
+  },
+  {
+    stat: "₱3.6B+",
+    label: "ASEAN Breach Cost",
+    source: "IBM 2025",
+    description: "Total financial damage from data breaches across Southeast Asia — a region the Philippines is increasingly central to.",
+  },
+  {
+    stat: "Up to ₱5M",
+    label: "NPC Regulatory Fine",
+    source: "NPC 2022-01",
+    description: "Maximum penalty the National Privacy Commission can impose for failure to protect customer data.",
+  },
+];
+
 const RESULTS = {
   resilient: {
     icon: "✅",
@@ -165,7 +192,6 @@ const Assessment = () => {
     setSubmitting(false);
   };
 
-  // Stable scroll container — prevents scroll-to-top on state updates
   const scrollRef = useRef(null);
   const Card = useCallback(({ children }) => (
     <div ref={scrollRef} className="min-h-screen bg-background flex items-start justify-center py-12 px-4">
@@ -196,16 +222,14 @@ const Assessment = () => {
               2026 Philippine Risk Benchmarks
             </p>
             <div className="grid grid-cols-2 gap-2 mb-5">
-              {[
-                ["₱250K–₱1.5M", "/ day — Interruption", "WEF 2026"],
-                ["₱500,000+", "/ incident — Recovery", "Unit 42"],
-                ["₱3.6B+", "ASEAN Breach Cost", "IBM 2025"],
-                ["Up to ₱5M", "NPC Regulatory Fine", "NPC 2022-01"],
-              ].map(([stat, label, source]) => (
+              {BENCHMARKS.map(({ stat, label, source, description }) => (
                 <div key={stat} className="bg-secondary rounded-md p-3">
                   <p className="text-[15px] font-bold text-foreground leading-tight">{stat}</p>
                   <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">{label}</p>
                   <p className="text-[9px] text-muted-foreground/50 font-medium tracking-wide mt-1">{source}</p>
+                  <p className="text-[10px] text-muted-foreground/70 leading-snug mt-2 pt-2 border-t border-border">
+                    {description}
+                  </p>
                 </div>
               ))}
             </div>
