@@ -197,7 +197,7 @@ const Assessment = () => {
             </p>
             <div className="grid grid-cols-2 gap-2 mb-5">
               {[
-                ["₱250K–₱1.5M", "/ day — Interruption", "WEF 2026"],
+                ["₱250K–₱1.5M", "/ day — Interruption", "WEF 2026", "Every day your systems are down, this is what Philippine businesses lose in revenue and productivity."],
                 ["₱500,000+", "/ incident — Recovery", "Unit 42"],
                 ["₱3.6B+", "ASEAN Breach Cost", "IBM 2025"],
                 ["Up to ₱5M", "NPC Regulatory Fine", "NPC 2022-01"],
