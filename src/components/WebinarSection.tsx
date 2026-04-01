@@ -3,7 +3,7 @@ const WebinarSection = () => (
     <div className="section-inner">
       <div className="max-w-[680px]">
         <span className="block text-[11px] font-medium tracking-[0.1em] uppercase text-muted-foreground mb-4">
-          Webinar · April 7, 2026
+          Webinar · April 10, 2026
         </span>
         <h2 className="text-[clamp(28px,3vw,40px)] font-light tracking-tight leading-[1.1] text-foreground mb-5">
           One conversation that could change<br />
