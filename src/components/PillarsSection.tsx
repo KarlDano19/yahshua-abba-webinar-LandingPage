@@ -27,7 +27,7 @@ const PillarsSection = () =>
           Security built into<br /><strong className="font-semibold">what you already use.</strong>
         </h2>
         <p className="text-base leading-[1.75] text-muted-foreground max-w-[480px]">
-          No migration. No new logins. CyTech's protection layers directly onto our existing YAHSHUA-ABBA solutions.
+          CyTech's protection layers directly onto our existing YAHSHUA-ABBA solutions.
         </p>
       </div>
 
