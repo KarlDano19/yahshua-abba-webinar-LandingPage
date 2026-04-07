@@ -154,7 +154,7 @@ const FormCard = () => {
                 </div>
                 <p className="text-base font-semibold text-foreground mb-2">You're confirmed.</p>
                 <p className="text-[13px] text-muted-foreground leading-relaxed">
-                  Your Zoom link is on its way.<br />See you on <strong>April 7 · 1:00 PM PHT.</strong>
+                  Your Zoom link is on its way.<br />See you on <strong>April 10, 2026 · 11:00 AM PHT.</strong>
                 </p>
               </div>
             )}
