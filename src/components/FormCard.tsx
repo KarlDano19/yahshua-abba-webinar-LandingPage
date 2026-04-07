@@ -159,7 +159,7 @@ const FormCard = () => {
               </div>
             )}
             <p className="mt-3.5 text-[11px] text-muted-foreground/50 text-center leading-relaxed">
-              Free · April 7, 2026 · 1:00–2:00 PM PHT · Zoom
+              Free · April 10, 2026 · 11:00 AM PHT · Zoom
             </p>
           </div>
         )}
